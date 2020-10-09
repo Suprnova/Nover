@@ -1,0 +1,75 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Nover/1.0.0": {
+        "dependencies": {
+          "SpotifyAPI.Web": "6.0.0-beta.12",
+          "TagLibSharp": "2.2.0"
+        },
+        "runtime": {
+          "Nover.dll": {}
+        }
+      },
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      },
+      "SpotifyAPI.Web/6.0.0-beta.12": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.1/SpotifyAPI.Web.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "TagLibSharp/2.2.0": {
+        "runtime": {
+          "lib/netstandard2.0/TagLibSharp.dll": {
+            "assemblyVersion": "2.2.0.0",
+            "fileVersion": "2.2.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Nover/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
+    "SpotifyAPI.Web/6.0.0-beta.12": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VH0Gmqt/+Yw8Ko5LmfiQcjuUdyifZqtAVjpOqDUZCHmi1KtLqx3K26VrJHgHDAUFPQ3QPA6oO8gaVaLUEWG9BA==",
+      "path": "spotifyapi.web/6.0.0-beta.12",
+      "hashPath": "spotifyapi.web.6.0.0-beta.12.nupkg.sha512"
+    },
+    "TagLibSharp/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-X8UOWeaJgHGrN3xilg3O0lqowhUSwNEiGrE8ITDd1rCn14LqGCWKgn5GX++SW4vuXBMne8+pyic6aUvOFQMRlA==",
+      "path": "taglibsharp/2.2.0",
+      "hashPath": "taglibsharp.2.2.0.nupkg.sha512"
+    }
+  }
+}
