@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -48,15 +47,15 @@ namespace Nover
         private static void CreateSettings()
         {
             Console.WriteLine($"Creating a settings.ini file in {Path.Combine(Globals.docPath, "settings.ini")}");
-            System.IO.File.WriteAllText(Path.Combine(Globals.docPath, "settings.ini"), "// Path for your local files folder\nLocal files directory: \n // Path for the image to show when no album cover is available, must be a .jpg\nNot playing/empty album art: \n// How often the program will check if the song updated in milliseconds, defaults to 1000, min of 100, max of 10000 \nSong check delay: 1000 \n// Format for the text file, supports {title} and {artist} \nText format: ");
+            System.IO.File.WriteAllText(Path.Combine(Globals.docPath, "settings.ini"), "// Path for your local files folder\nLocal files directory: \n // Path for the image to show when no album cover is available, must be a .jpg\nNot playing/empty album art: \n// How often the program will check if the song updated in milliseconds, defaults to 1000, min of 100, max of 10000 \nSong check delay: 1000 \n// Format for the text file, supports {title} and {artist} \nText format: {title} by {artist}");
         }
 
         private static void ConfigureSpotify()
         {
             Console.WriteLine("Configuring Spotify...");
-            var config = SpotifyClientConfig.CreateDefault().WithAuthenticator(new ClientCredentialsAuthenticator(Globals.SpotifyID, Globals.SpotifySecret));
+            var config = SpotifyClientConfig.CreateDefault().WithAuthenticator(new ClientCredentialsAuthenticator(Globals.SpotifyID, Globals.SpotifySecret)).WithRetryHandler(new SimpleRetryHandler() { RetryAfter = TimeSpan.FromSeconds(1) });
             Globals.Spotify = new SpotifyClient(config);
-            Console.WriteLine("i did it");
+            Console.WriteLine("Configured!");
         }
 
         private static void SetTimer()
@@ -68,13 +67,17 @@ namespace Nover
             timer.Enabled = true;
         }
 
-        private static void CheckPlayer(Object source, ElapsedEventArgs e)
+        private static async void CheckPlayer(Object source, ElapsedEventArgs e)
         {
-            FileInfo fi = new FileInfo(Path.Combine(Globals.docPath, "cover.jpg"));
-            if (fi.Length == 0)
+            try
             {
-                SetCoverEmpty();
+                FileInfo fi = new FileInfo(Path.Combine(Globals.docPath, "cover.jpg"));
+                if (fi.Length == 0)
+                {
+                    SetCoverEmpty();
+                }
             }
+            catch { };
             var spotify = Process.GetProcessesByName("Spotify").FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.MainWindowTitle));
             if (spotify.MainWindowTitle == Globals.Song)
             {
@@ -83,23 +86,23 @@ namespace Nover
             }
             if (spotify == null)
             {
-                UpdatePlayer(false, null);
+                await UpdatePlayer(false, null);
                 return;
             }
             if (string.Equals(spotify.MainWindowTitle, "Spotify", StringComparison.InvariantCultureIgnoreCase) || string.Equals(spotify.MainWindowTitle, "Spotify Premium", StringComparison.InvariantCultureIgnoreCase))
             {
-                UpdatePlayer(false, null);
+                await UpdatePlayer(false, null);
                 return;
             }
-            UpdatePlayer(true, spotify.MainWindowTitle);
+            await UpdatePlayer(true, spotify.MainWindowTitle);
         }
 
-        private static void UpdatePlayer(bool isPlaying, string song)
+        private static async Task UpdatePlayer(bool isPlaying, string song)
         {
             string docPath = Globals.docPath;
             if (isPlaying)
             {
-                string songName = song.Trim().Substring(song.Trim().IndexOf('-') + 1).Trim();
+                string songName = song.Trim().Substring(song.Trim().IndexOf(" - ") + 3).Trim();
                 string artistName = song.Trim().Substring(0, song.Trim().Length - songName.Length - 2).Trim();
                 string textFormat = Settings("Text");
                 if (textFormat != null)
@@ -107,13 +110,15 @@ namespace Nover
                     textFormat = textFormat.Replace("{title}", songName);
                     textFormat = textFormat.Replace("{artist}", artistName);
                     System.IO.File.WriteAllText(Path.Combine(docPath, "Nover.txt"), textFormat);
+                    Console.WriteLine(textFormat);
                 }
                 else
                 {
                     System.IO.File.WriteAllText(Path.Combine(docPath, "Nover.txt"), song);
+                    Console.WriteLine(song);
                 }
                 Globals.Song = song;
-                FetchCover(songName, artistName);
+                await FetchCover(songName, artistName);
                 SetTimer();
             }
             else
@@ -154,6 +159,8 @@ namespace Nover
                     MemoryStream ms = new MemoryStream(cover.Data.Data);
                     FileStream fs = new FileStream(Path.Combine(Globals.docPath, "cover.jpg"), FileMode.Create, FileAccess.Write);
                     ms.WriteTo(fs);
+                    // ensures the file fully saves before closing the stream
+                    System.Threading.Thread.Sleep(200);
                     fs.Close();
                     ms.Close();
                     return;
@@ -168,7 +175,6 @@ namespace Nover
             artist = artist.Replace("\"", "");
             song = song.Replace("\'", "");
             artist = artist.Replace("\'", "");
-            Console.WriteLine(song + artist);
             var search = await Globals.Spotify.Search.Item(new SearchRequest(SearchRequest.Types.Track, $"track:\"{song}\" artist:\"{artist}\""));
             int i = 0;
             if (search.Tracks.Items.Count == 0)

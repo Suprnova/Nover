@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="SpotifyAPI.Web" Version="6.0.0-beta.12" />
+    <PackageReference Include="System.ComponentModel.EventBasedAsync" Version="4.3.0" />
+    <PackageReference Include="System.Net.WebHeaderCollection" Version="4.3.0" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
   </ItemGroup>
 
