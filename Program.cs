@@ -46,6 +46,7 @@ namespace Nover
 
         private static void CreateSettings()
         {
+            Directory.CreateDirectory(Globals.docPath);
             Console.WriteLine($"Creating a settings.ini file in {Path.Combine(Globals.docPath, "settings.ini")}");
             System.IO.File.WriteAllText(Path.Combine(Globals.docPath, "settings.ini"), "// Path for your local files folder\nLocal files directory: \n // Path for the image to show when no album cover is available, must be a .jpg\nNot playing/empty album art: \n// How often the program will check if the song updated in milliseconds, defaults to 1000, min of 100, max of 10000 \nSong check delay: 1000 \n// Format for the text file, supports {title} and {artist} \nText format: {title} by {artist}");
         }
