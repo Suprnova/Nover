@@ -90,7 +90,7 @@ namespace Nover
                 await UpdatePlayer(false, null);
                 return;
             }
-            if (string.Equals(spotify.MainWindowTitle, "Spotify", StringComparison.InvariantCultureIgnoreCase) || string.Equals(spotify.MainWindowTitle, "Spotify Premium", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(spotify.MainWindowTitle, "Spotify Free", StringComparison.InvariantCultureIgnoreCase) || string.Equals(spotify.MainWindowTitle, "Spotify Premium", StringComparison.InvariantCultureIgnoreCase) || string.Equals(spotify.MainWindowTitle, "Advertisement", StringComparison.InvariantCultureIgnoreCase))
             {
                 await UpdatePlayer(false, null);
                 return;
